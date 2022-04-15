@@ -1,0 +1,239 @@
+tags:
+  - name: rides
+    description: rides API
+
+paths:
+  # [GET] rides pagination
+  /v1/rides:
+    get:
+      tags:
+        - v1
+      summary: Filter rides by page and limit
+      parameters:
+        - name: page
+          in: query
+          description: page
+          required: true
+          type: integer
+          minimum: 1
+        - name: limit
+          in: query
+          description: limit
+          required: true
+          type: integer
+          minimum: 1
+      responses:
+        200:
+          description: 'Result without pagination'
+          schema:
+            $ref: "#/definitions/getAllRides"
+        200 pagination:
+          description: 'Result with pagination'
+          schema:
+            $ref: "#/definitions/getRidesWithPagination"
+        404:
+          description: 'Not Found'
+        500:
+          description: 'Server Error'
+
+  # [GET] user details
+  /v2/users/me:
+    get:
+      tags:
+        - v2
+      summary: get user details
+      responses:
+        200:
+          description: 'Result with user details'
+          schema:
+            $ref: "#/definitions/getUserDetails"
+        500:
+          description: 'Server Error'
+        404:
+          description: 'Not Found'
+  # [POST] Create rides
+  /v2/users/rides:
+    post:
+      tags:
+        - v2
+      summary: Create a ride
+      parameters:
+        - name: body
+          in: body
+          description: rides Data
+          required: true
+          schema:
+            $ref: '#/definitions/rides'
+      responses:
+        201:
+          description: 'Created'
+          schema:
+            $ref: '#/definitions/createRideResponse'
+        400:
+          schema:
+            $ref: '#/definitions/createRidesInvalidReqBody'
+          description: 'Bad Request'
+        409:
+          description: 'Conflict'
+        500:
+          description: 'Server Error'
+  # [GET] ride by id
+  /v2/users/rides/{id}:
+    get:
+      tags:
+        - v2
+      summary: Get ride by id
+      parameters:
+        - name: id
+          in: path
+          description: rides Id
+          required: true
+          type: integer
+      responses:
+        200:
+          description: 'OK'
+        404:
+          description: 'Not Found'
+        500:
+          description: 'Server Error'
+
+# definitions
+definitions:
+  rides:
+    type: object
+    required:
+      - start_lat
+      - start_long
+      - end_lat
+      - end_long
+      - rider_name
+      - driver_name
+      - driver_vehicle
+    properties:
+      start_lat:
+        type: integer
+        description: rides start lat
+      start_long:
+        type: integer
+        description: rides start long
+      end_lat:
+        type: integer
+        description: rides end lat
+      end_long:
+        type: integer
+        description: rides end long
+      rider_name:
+        type: string
+        description: rider name
+      driver_name:
+        type: string
+        description: driver name
+      driver_vehicle:
+        type: string
+        description: driver vehicle
+  createRideResponse:
+    type: object
+    properties:
+      createdAt:
+        type: string
+        example: '2022-04-10T09:48:30.391Z'
+      rideId:
+        type: integer
+        example: 13
+      startLong:
+        type: integer
+        example: 47.6161
+      startLat:
+        type: integer
+        example: 47.6161
+      endLat:
+        type: string
+        example: 47.6161
+      endLong:
+        type: string
+        example: 47.6161
+      driverName:
+        type: string
+        example: Eliza
+      driverVehicle:
+        type: string
+        example: Mercedes Benz C class
+  createRidesInvalidReqBody:
+    type: object
+    properties:
+      error_code:
+        type: string
+        example: 'VALIDATION_ERROR'
+      message:
+        type: array
+        example: [
+          {
+            "type": "required",
+            "message": "The 'end_long' field is required.",
+            "field": "end_long"
+          }
+        ]
+  getRidesWithPagination:
+    type: object
+    properties:
+      count:
+        type: int
+        example: 7,
+      rows:
+        type: array
+        example: [ {
+          "rideId": 20,
+          "driverName": "Eliza",
+          "driverVehicle": "Mercedes Benz C class",
+          "startLong": 47.6161,
+          "startLat": 47.6161,
+          "endLat": 47.6161,
+          "endLong": 47.6161,
+          "createdAt": "2022-04-09T15:40:48.097Z"
+        } ]
+  getAllRides:
+    type: array
+    example: [ {
+      "rideId": 20,
+      "driverName": "Eliza",
+      "driverVehicle": "Mercedes Benz C class",
+      "startLong": 47.6161,
+      "startLat": 47.6161,
+      "endLat": 47.6161,
+      "endLong": 47.6161,
+      "createdAt": "2022-04-09T15:40:48.097Z"
+    } ]
+  getUserDetails:
+    type: object
+    properties:
+      _id:
+        type: string
+        example: "60bdafce3d667d55701df54a"
+      firstName:
+        type: string
+        example: "Johnathan"
+      lasrName:
+        type: string
+        example: "Johnathan"
+      city:
+        type: string
+        example: "Erichstad"
+      state:
+        type: string
+        example: "Nevada"
+      country:
+        type: string
+        example: "Grenada"
+      streetAddress:
+        type: string
+        example: "360 Spencer Street"
+      phone:
+        type: string
+        example: "1-411-365-0326"
+      vehicle:
+        type: string
+        example: "Polestar LeBaron"
+
+schemes:
+  - https
+  - http
